@@ -14,7 +14,7 @@ import MiniProducts from "./Screens/minproducts";
 import Products from "./Screens/products";
 import Manage from "./Screens/AdminProductManager";
 
-type Screen = "login" | "signup";
+type Screen = "login" | "signup" | "home";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>("login");
