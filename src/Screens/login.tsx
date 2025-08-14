@@ -8,8 +8,10 @@ import { auth, googleProvider } from "../firebase/config";
 // Import your video
 import bgVideo from "../assets/vecteezy_3d-rendered-super-car-cinematic-front-view-in-dark_34634291.mp4";
 
+type Screen = "login" | "signup" | "home";
+
 interface LoginProps {
-  onNavigate: (screen: "login" | "signup" | "home") => void;
+  onNavigate: (screen: Screen) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onNavigate }) => {

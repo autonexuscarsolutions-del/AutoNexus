@@ -202,7 +202,7 @@ const AdminProductManager: React.FC<AdminProductManagerProps> = ({ user }) => {
       setForm((prev) => ({
         ...prev,
         [parent]: {
-          ...prev[parent as keyof ProductType],
+          ...(prev[parent as keyof ProductType] as object),
           [child]: value
         }
       }));

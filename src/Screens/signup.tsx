@@ -4,8 +4,10 @@ import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/config";
 import bgVideo from "../assets/vecteezy_3d-rendered-super-car-cinematic-front-view-in-dark_34634291.mp4";
 
+type Screen = "login" | "signup" | "home";
+
 interface SignupProps {
-  onNavigate: (screen: "login" | "signup" | "home") => void;
+  onNavigate: (screen: Screen) => void;
 }
 
 const Signup: React.FC<SignupProps> = ({ onNavigate }) => {

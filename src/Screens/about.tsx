@@ -1,7 +1,6 @@
-import React from "react";
 import { Wrench, Settings, Truck, ShieldCheck } from "lucide-react";
 
-const AboutPage = ({ onNavigate }) => {
+const AboutPage = () => {
   const teamMembers = [
     {
       name: "Performance Engineers",

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -11,22 +11,15 @@ import {
   Menu,
   X,
   Home,
-  Package,
   Info,
   Settings,
   Heart,
   LogOut,
   ShoppingBag,
-  History,
   TrendingUp,
-  Filter,
   MapPin,
-  Phone,
-  Mail,
   Clock,
-  Star,
-  Plus,
-  Minus
+  Star
 } from "lucide-react";
 
 interface NavbarProps {
@@ -79,31 +72,6 @@ const cartItems = [
   }
 ];
 
-// Mock notifications
-const notifications = [
-  {
-    id: 1,
-    title: "Order Shipped",
-    message: "Your brake pads order has been shipped",
-    time: "2 hours ago",
-    unread: true
-  },
-  {
-    id: 2,
-    title: "Price Drop Alert",
-    message: "Engine oil now 20% off",
-    time: "5 hours ago",
-    unread: true
-  },
-  {
-    id: 3,
-    title: "Delivery Completed",
-    message: "Your order has been delivered",
-    time: "1 day ago",
-    unread: false
-  }
-];
-
 const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   user,
@@ -119,8 +87,8 @@ const Navbar: React.FC<NavbarProps> = ({
     useState(false);
   const [filteredSuggestions, setFilteredSuggestions] =
     useState(searchSuggestions);
-  const [cartItemsState, setCartItemsState] = useState(cartItems);
-  const [unreadNotifications, setUnreadNotifications] = useState(2);
+  const [cartItemsState] = useState(cartItems);
+  const [unreadNotifications] = useState(2);
   const [activeSection, setActiveSection] = useState("home");
 
   const navigate = useNavigate();
@@ -194,42 +162,10 @@ const Navbar: React.FC<NavbarProps> = ({
     setIsSearchFocused(false);
   };
 
-  const updateCartQuantity = (id: number, change: number) => {
-    setCartItemsState(
-      (prev) =>
-        prev
-          .map((item) => {
-            if (item.id === id) {
-              const newQuantity = Math.max(0, item.quantity + change);
-              return newQuantity === 0
-                ? null
-                : { ...item, quantity: newQuantity };
-            }
-            return item;
-          })
-          .filter(Boolean) as typeof cartItems
-    );
-  };
-
-  const removeCartItem = (id: number) => {
-    setCartItemsState((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const cartTotal = cartItemsState.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
   const cartItemCount = cartItemsState.reduce(
     (total, item) => total + item.quantity,
     0
   );
-
-  const markNotificationAsRead = (id: number) => {
-    const notification = notifications.find((n) => n.id === id);
-    if (notification?.unread) {
-      setUnreadNotifications((prev) => Math.max(0, prev - 1));
-    }
-  };
 
   const navItems = [
     {

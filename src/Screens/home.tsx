@@ -1,28 +1,27 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
   Zap,
   Wrench,
   Gauge,
-  Cog,
-  Car,
   Settings,
-  Play,
-  Pause,
   Truck,
   Shield,
   CircleDot,
   ShoppingCart,
-  Battery,
-  Filter
+  Battery
 } from "lucide-react";
-
-const AutoNexusLanding = () => {
+interface HomeProps {
+  user: any;
+  searchQuery: string;
+}
+const Home: React.FC<HomeProps> = ({ user, searchQuery }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
+  const [isAutoPlaying] = useState(true);
+  console.log("Logged in as:", user?.displayName);
+  console.log("Search query:", searchQuery);
   // Updated car parts database with real automotive products
   const carParts = [
     {
@@ -101,7 +100,7 @@ const AutoNexusLanding = () => {
     }
   ];
 
-  const handleCircleClick = (index) => {
+  const handleCircleClick = (index: number) => {
     if (isAnimating) return;
     setIsAnimating(true);
     setActiveIndex(index);
@@ -547,4 +546,4 @@ const AutoNexusLanding = () => {
   );
 };
 
-export default AutoNexusLanding;
+export default Home;

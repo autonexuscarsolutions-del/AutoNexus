@@ -1,6 +1,4 @@
-import React from "react";
 import {
-  MapPin,
   Phone,
   Mail,
   Clock,
@@ -40,16 +38,12 @@ const Footer = () => {
 
             <div className="space-y-2">
               <div className="flex items-center gap-3 text-sm">
-                <MapPin className="w-4 h-4 text-red-400" />
-                <span>123 Auto Street, Detroit, MI 48201</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
                 <Phone className="w-4 h-4 text-red-400" />
-                <span>(123) 456-7890</span>
+                <span>(+94) 743361910</span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Mail className="w-4 h-4 text-red-400" />
-                <span>support@autonexus.com</span>
+                <span>autonexuscarsolutions@gmail.com </span>
               </div>
               <div className="flex items-center gap-3 text-sm">
                 <Clock className="w-4 h-4 text-red-400" />
@@ -63,7 +57,7 @@ const Footer = () => {
             <h3 className="text-lg font-bold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               {[
-                { name: "Home", href: "#home" },
+                { name: "Home", href: "/home" },
                 { name: "About Us", href: "#about" },
                 { name: "Products", href: "#products" },
                 { name: "Special Offers", href: "#offers" },
@@ -197,28 +191,6 @@ const Footer = () => {
           <p className="text-xs text-slate-500">
             © {new Date().getFullYear()} AutoNexus. All rights reserved.
           </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <img
-              src="https://via.placeholder.com/40x25?text=Visa"
-              alt="Visa"
-              className="h-6 opacity-80 hover:opacity-100 transition-opacity"
-            />
-            <img
-              src="https://via.placeholder.com/40x25?text=MC"
-              alt="Mastercard"
-              className="h-6 opacity-80 hover:opacity-100 transition-opacity"
-            />
-            <img
-              src="https://via.placeholder.com/40x25?text=Amex"
-              alt="American Express"
-              className="h-6 opacity-80 hover:opacity-100 transition-opacity"
-            />
-            <img
-              src="https://via.placeholder.com/40x25?text=PayPal"
-              alt="PayPal"
-              className="h-6 opacity-80 hover:opacity-100 transition-opacity"
-            />
-          </div>
         </div>
       </div>
     </footer>

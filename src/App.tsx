@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import type { User } from "firebase/auth";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth } from "./firebase/config";
 import { Routes, Route, Navigate } from "react-router-dom";
 
@@ -24,10 +23,10 @@ function App() {
   const ADMIN_EMAIL = "autonexuscarsolutions@gmail.com";
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
       setLoading(false);
-      if (!user) setCurrentScreen("login");
+      if (!firebaseUser) setCurrentScreen("login");
     });
     return () => unsubscribe();
   }, []);
@@ -51,8 +50,12 @@ function App() {
   if (!user) {
     return (
       <div>
-        {currentScreen === "login" && <Login onNavigate={setCurrentScreen} />}
-        {currentScreen === "signup" && <Signup onNavigate={setCurrentScreen} />}
+        {currentScreen === "login" && (
+          <Login onNavigate={(screen: Screen) => setCurrentScreen(screen)} />
+        )}
+        {currentScreen === "signup" && (
+          <Signup onNavigate={(screen: Screen) => setCurrentScreen(screen)} />
+        )}
       </div>
     );
   }
@@ -61,10 +64,10 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-900">
       <Navbar
-        onNavigate={setCurrentScreen}
+        onNavigate={(screen: Screen) => setCurrentScreen(screen)}
         user={user}
         searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        onSearchChange={(value: string) => setSearchQuery(value)}
       />
 
       <Routes>
