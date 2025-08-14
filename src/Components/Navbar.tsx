@@ -365,8 +365,11 @@ const Navbar: React.FC<NavbarProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-red-400 to-red-600 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </div>
                 <div className="flex flex-col">
-                  <h1 className="text-xl font-black text-white group-hover:text-red-400 transition-colors duration-300">
-                    Auto<span className="text-red-400">Nexus</span>
+                  <h1
+                    style={{ fontFamily: "Magenta, Arial Black, sans-serif" }}
+                    className="text-xl font-black text-white group-hover:text-red-600 transition-colors duration-300"
+                  >
+                    Auto<span className="text-red-600">Nexus</span>
                   </h1>
                   <span className="text-xs font-medium text-slate-400 -mt-1">
                     Car Solutions
