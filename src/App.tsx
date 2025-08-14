@@ -30,10 +30,6 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [globalSearchResults, setGlobalSearchResults] = useState<
-    SearchableContent[]
-  >([]);
-  const [isSearching, setIsSearching] = useState(false);
   const ADMIN_EMAIL = "autonexuscarsolutions@gmail.com";
 
   const searchableContent: SearchableContent[] = useMemo(
@@ -284,12 +280,6 @@ function App() {
     setIsSearching(false);
   };
 
-  const clearSearch = () => {
-    setSearchQuery("");
-    setGlobalSearchResults([]);
-    setIsSearching(false);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
@@ -332,89 +322,40 @@ function App() {
           element={
             <div>
               <div data-section="home">
-                <Home
-                  user={user}
-                  searchQuery={searchQuery}
-                  searchResults={globalSearchResults.filter(
-                    (r) => r.section === "home"
-                  )}
-                  isSearching={isSearching}
-                />
+                <Home user={user} searchQuery={searchQuery} />
               </div>
               <div data-section="about">
-                <About
-                  searchQuery={searchQuery}
-                  searchResults={globalSearchResults.filter(
-                    (r) => r.section === "about"
-                  )}
-                  isSearching={isSearching}
-                />
+                <About />
               </div>
               <div data-section="miniproducts">
-                <MiniProducts
-                  searchQuery={searchQuery}
-                  searchResults={globalSearchResults.filter(
-                    (r) => r.section === "miniproducts"
-                  )}
-                  isSearching={isSearching}
-                />
+                <MiniProducts />
               </div>
 
               {/* Admin only: Billing */}
               {user.email === ADMIN_EMAIL && (
                 <div data-section="billing">
-                  <Billing
-                    user={user}
-                    searchQuery={searchQuery}
-                    searchResults={globalSearchResults.filter(
-                      (r) => r.section === "billing"
-                    )}
-                    isSearching={isSearching}
-                  />
+                  <Billing />
                 </div>
               )}
 
               {/* Admin only: Manage */}
               {user.email === ADMIN_EMAIL && (
                 <div data-section="manage">
-                  <Manage
-                    user={user}
-                    searchQuery={searchQuery}
-                    searchResults={globalSearchResults.filter(
-                      (r) => r.section === "manage"
-                    )}
-                    isSearching={isSearching}
-                  />
+                  <Manage user={user} />
                 </div>
               )}
             </div>
           }
         />
 
-        <Route
-          path="/products"
-          element={
-            <Products
-              searchQuery={searchQuery}
-              searchResults={globalSearchResults}
-              isSearching={isSearching}
-            />
-          }
-        />
+        <Route path="/products" element={<Products />} />
 
         {/* Admin only: Billing page */}
         <Route
           path="/billing"
           element={
             user.email === ADMIN_EMAIL ? (
-              <Billing
-                user={user}
-                searchQuery={searchQuery}
-                searchResults={globalSearchResults.filter(
-                  (r) => r.section === "billing"
-                )}
-                isSearching={isSearching}
-              />
+              <Billing />
             ) : (
               <Navigate to="/" replace />
             )

@@ -22,7 +22,6 @@ import {
   Star,
   FileText,
   Package,
-  Users,
   Loader2
 } from "lucide-react";
 
