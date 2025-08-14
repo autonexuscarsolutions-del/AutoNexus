@@ -30,6 +30,8 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [, setGlobalSearchResults] = useState<SearchableContent[]>([]);
+  const [, setIsSearching] = useState(false);
   const ADMIN_EMAIL = "autonexuscarsolutions@gmail.com";
 
   const searchableContent: SearchableContent[] = useMemo(
