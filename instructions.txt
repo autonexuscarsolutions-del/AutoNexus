@@ -33,3 +33,15 @@ autonexuscarsolutions
 LRaEDPS8RkC52M23
 
 mongodb+srv://autonexuscarsolutions:LRaEDPS8RkC52M23@autonexus.n24mddt.mongodb.net/?retryWrites=true&w=majority&appName=autonexus
+
+
+
+git add .
+
+git commit -m "Updated Vite app with new changes"
+
+git push origin main
+
+npm run build
+
+npm run deploy

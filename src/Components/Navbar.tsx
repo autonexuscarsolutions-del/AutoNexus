@@ -19,7 +19,11 @@ import {
   TrendingUp,
   MapPin,
   Clock,
-  Star
+  Star,
+  FileText,
+  Package,
+  Users,
+  Loader2
 } from "lucide-react";
 
 interface NavbarProps {
@@ -27,25 +31,84 @@ interface NavbarProps {
   user: any;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onGlobalSearch?: (query: string) => void;
 }
 
-// Mock data for search suggestions
+// Enhanced search suggestions with real functionality
 const searchSuggestions = [
-  { id: 1, text: "Brake Pads", category: "Brakes", popular: true },
-  { id: 2, text: "Engine Oil", category: "Fluids", popular: true },
-  { id: 3, text: "Air Filter", category: "Filters", popular: false },
-  { id: 4, text: "Spark Plugs", category: "Engine", popular: true },
-  { id: 5, text: "Headlight Bulbs", category: "Lighting", popular: false },
-  { id: 6, text: "Windshield Wipers", category: "Exterior", popular: false },
-  { id: 7, text: "Transmission Fluid", category: "Fluids", popular: false },
-  { id: 8, text: "Car Battery", category: "Electrical", popular: true }
+  {
+    id: 1,
+    text: "Brake Pads",
+    category: "Brakes",
+    popular: true,
+    section: "miniproducts"
+  },
+  {
+    id: 2,
+    text: "Engine Oil",
+    category: "Fluids",
+    popular: true,
+    section: "miniproducts"
+  },
+  {
+    id: 3,
+    text: "Air Filter",
+    category: "Filters",
+    popular: false,
+    section: "miniproducts"
+  },
+  {
+    id: 4,
+    text: "Spark Plugs",
+    category: "Engine",
+    popular: true,
+    section: "miniproducts"
+  },
+  {
+    id: 5,
+    text: "Company History",
+    category: "About",
+    popular: false,
+    section: "about"
+  },
+  {
+    id: 6,
+    text: "Our Services",
+    category: "Home",
+    popular: true,
+    section: "home"
+  },
+  {
+    id: 7,
+    text: "Quality Assurance",
+    category: "Home",
+    popular: false,
+    section: "home"
+  },
+  {
+    id: 8,
+    text: "Suspension Parts",
+    category: "Suspension",
+    popular: false,
+    section: "miniproducts"
+  },
+  {
+    id: 9,
+    text: "Electrical Components",
+    category: "Electrical",
+    popular: false,
+    section: "miniproducts"
+  },
+  {
+    id: 10,
+    text: "Mission",
+    category: "About",
+    popular: false,
+    section: "about"
+  }
 ];
 
-const recentSearches = [
-  "Brake Pads Toyota",
-  "Engine Oil 5W-30",
-  "Air Filter Honda"
-];
+const recentSearches = ["Brake Pads", "Engine Oil", "Air Filter"];
 
 // Mock cart items
 const cartItems = [
@@ -76,7 +139,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   user,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  onGlobalSearch
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -90,6 +154,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [cartItemsState] = useState(cartItems);
   const [unreadNotifications] = useState(2);
   const [activeSection, setActiveSection] = useState("home");
+  const [isSearching, setIsSearching] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -156,10 +221,63 @@ const Navbar: React.FC<NavbarProps> = ({
     setIsMenuOpen(false);
   };
 
-  const handleSearchSuggestionClick = (suggestion: string) => {
-    onSearchChange(suggestion);
+  const handleSearchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setIsSearching(true);
+
+      // Trigger global search
+      if (onGlobalSearch) {
+        onGlobalSearch(searchQuery.trim());
+      }
+
+      // Navigate to home page if not already there
+      if (location.pathname !== "/") {
+        navigate("/");
+      }
+
+      setSearchSuggestionsVisible(false);
+      setIsSearchFocused(false);
+
+      // Simulate search delay
+      setTimeout(() => {
+        setIsSearching(false);
+      }, 500);
+    }
+  };
+
+  const handleSearchSuggestionClick = (suggestion: {
+    text: string;
+    section?: string;
+  }) => {
+    onSearchChange(suggestion.text);
+    setIsSearching(true);
+
+    // Trigger global search
+    if (onGlobalSearch) {
+      onGlobalSearch(suggestion.text);
+    }
+
+    // Navigate to the relevant section if specified
+    if (suggestion.section) {
+      scrollToSection(suggestion.section);
+    } else if (location.pathname !== "/") {
+      navigate("/");
+    }
+
     setSearchSuggestionsVisible(false);
     setIsSearchFocused(false);
+
+    // Simulate search delay
+    setTimeout(() => {
+      setIsSearching(false);
+    }, 500);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearchSubmit(e as any);
+    }
   };
 
   const cartItemCount = cartItemsState.reduce(
@@ -198,6 +316,29 @@ const Navbar: React.FC<NavbarProps> = ({
     });
   }
 
+  const getSectionIcon = (section: string) => {
+    switch (section) {
+      case "miniproducts":
+        return Package;
+      case "about":
+        return Info;
+      case "home":
+        return Home;
+      case "manage":
+        return Settings;
+      default:
+        return FileText;
+    }
+  };
+
+  const clearSearch = () => {
+    onSearchChange("");
+    if (onGlobalSearch) {
+      onGlobalSearch("");
+    }
+    setIsSearching(false);
+  };
+
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-2xl border-b border-slate-700/50 shadow-lg shadow-black/10">
@@ -206,7 +347,10 @@ const Navbar: React.FC<NavbarProps> = ({
             {/* Logo Section */}
             <div className="flex items-center">
               <button
-                onClick={() => scrollToSection("home")}
+                onClick={() => {
+                  scrollToSection("home");
+                  clearSearch();
+                }}
                 className="flex items-center space-x-3 group"
               >
                 <div className="relative">
@@ -239,7 +383,10 @@ const Navbar: React.FC<NavbarProps> = ({
                   return (
                     <button
                       key={item.name}
-                      onClick={item.action}
+                      onClick={() => {
+                        item.action();
+                        clearSearch();
+                      }}
                       className={`relative group flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 ${
                         isActive
                           ? "bg-slate-800 text-red-400 shadow-md shadow-red-900/10 border border-slate-700"
@@ -267,31 +414,47 @@ const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center space-x-3">
               {/* Search Bar - Desktop */}
               <div className="hidden lg:block" ref={searchRef}>
-                <div className="relative">
+                <form onSubmit={handleSearchSubmit} className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-slate-500" />
+                    {isSearching ? (
+                      <Loader2 className="h-4 w-4 text-red-500 animate-spin" />
+                    ) : (
+                      <Search className="h-4 w-4 text-slate-500" />
+                    )}
                   </div>
                   <input
                     type="text"
-                    placeholder="Search auto parts..."
+                    placeholder="Search across all sections..."
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     onFocus={() => {
                       setIsSearchFocused(true);
                       setSearchSuggestionsVisible(true);
                     }}
-                    className="block w-64 pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-slate-800 transition-all duration-200"
+                    className="block w-72 pl-10 pr-16 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-slate-800 transition-all duration-200"
+                    disabled={isSearching}
                   />
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={clearSearch}
+                        className="text-slate-400 hover:text-white transition-colors"
+                        disabled={isSearching}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
                     <kbd className="inline-flex items-center px-1.5 py-0.5 bg-slate-700 text-slate-400 text-xs rounded font-mono">
                       ⌘K
                     </kbd>
                   </div>
-                </div>
+                </form>
 
                 {/* Search Suggestions */}
                 {searchSuggestionsVisible && (
-                  <div className="absolute top-full mt-1 w-64 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl py-2 z-50 backdrop-blur-xl">
+                  <div className="absolute top-full mt-1 w-72 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl py-2 z-50 backdrop-blur-xl max-h-80 overflow-y-auto">
                     {searchQuery.trim() === "" && (
                       <div className="px-3 pb-2 border-b border-slate-700">
                         <p className="text-xs font-semibold text-slate-400 mb-1">
@@ -300,8 +463,11 @@ const Navbar: React.FC<NavbarProps> = ({
                         {recentSearches.map((search, index) => (
                           <button
                             key={index}
-                            onClick={() => handleSearchSuggestionClick(search)}
+                            onClick={() =>
+                              handleSearchSuggestionClick({ text: search })
+                            }
                             className="flex items-center w-full px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-700 rounded-lg transition-colors"
+                            disabled={isSearching}
                           >
                             <Clock className="w-3 h-3 mr-2 text-slate-500" />
                             {search}
@@ -313,31 +479,50 @@ const Navbar: React.FC<NavbarProps> = ({
                     <div className="px-3">
                       <p className="text-xs font-semibold text-slate-400 mb-1">
                         {searchQuery.trim()
-                          ? "Suggestions"
-                          : "Popular Searches"}
+                          ? "Search Results"
+                          : "Browse by Category"}
                       </p>
-                      {filteredSuggestions.slice(0, 6).map((suggestion) => (
-                        <button
-                          key={suggestion.id}
-                          onClick={() =>
-                            handleSearchSuggestionClick(suggestion.text)
-                          }
-                          className="flex items-center justify-between w-full px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-700 rounded-lg transition-colors group"
-                        >
-                          <div className="flex items-center">
-                            <Search className="w-3 h-3 mr-2 text-slate-500 group-hover:text-red-500" />
-                            <span>{suggestion.text}</span>
+                      {filteredSuggestions.slice(0, 8).map((suggestion) => {
+                        const SectionIcon = getSectionIcon(suggestion.section);
+                        return (
+                          <button
+                            key={suggestion.id}
+                            onClick={() =>
+                              handleSearchSuggestionClick(suggestion)
+                            }
+                            className="flex items-center justify-between w-full px-2 py-2 text-xs text-slate-300 hover:bg-slate-700 rounded-lg transition-colors group"
+                            disabled={isSearching}
+                          >
+                            <div className="flex items-center">
+                              <Search className="w-3 h-3 mr-2 text-slate-500 group-hover:text-red-500" />
+                              <span className="font-medium">
+                                {suggestion.text}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <SectionIcon className="w-3 h-3 text-slate-500" />
+                              <span className="text-[10px] text-slate-500 capitalize">
+                                {suggestion.category}
+                              </span>
+                              {suggestion.popular && (
+                                <TrendingUp className="w-2.5 h-2.5 text-red-500" />
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+
+                      {searchQuery.trim() &&
+                        filteredSuggestions.length === 0 && (
+                          <div className="px-2 py-4 text-center">
+                            <p className="text-slate-400 text-xs">
+                              No suggestions found
+                            </p>
+                            <p className="text-slate-500 text-[10px] mt-1">
+                              Press Enter to search across all sections
+                            </p>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <span className="text-[10px] text-slate-500">
-                              {suggestion.category}
-                            </span>
-                            {suggestion.popular && (
-                              <TrendingUp className="w-2.5 h-2.5 text-red-500" />
-                            )}
-                          </div>
-                        </button>
-                      ))}
+                        )}
                     </div>
                   </div>
                 )}
@@ -480,18 +665,34 @@ const Navbar: React.FC<NavbarProps> = ({
 
           {/* Mobile Search Bar */}
           <div className="lg:hidden pb-3">
-            <div className="relative">
+            <form onSubmit={handleSearchSubmit} className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-slate-500" />
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 text-red-500 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4 text-slate-500" />
+                )}
               </div>
               <input
                 type="text"
-                placeholder="Search auto parts..."
+                placeholder="Search across all sections..."
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="block w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-slate-800"
+                onKeyDown={handleKeyDown}
+                className="block w-full pl-10 pr-10 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-slate-800"
+                disabled={isSearching}
               />
-            </div>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+                  disabled={isSearching}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </form>
           </div>
 
           {/* Mobile Menu */}
@@ -504,7 +705,10 @@ const Navbar: React.FC<NavbarProps> = ({
                   return (
                     <button
                       key={item.name}
-                      onClick={item.action}
+                      onClick={() => {
+                        item.action();
+                        clearSearch();
+                      }}
                       className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 mb-1 ${
                         isActive
                           ? "bg-slate-700 text-red-400 border border-slate-600 shadow"
